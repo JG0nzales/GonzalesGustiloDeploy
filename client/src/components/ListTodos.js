@@ -12,7 +12,7 @@ const ListTodos = () => {
 
   const deleteTodo = async (id) => {
     try {
-      const deleteTodo = await fetch(`http://localhost:5000/todos/${id}`, {
+      const deleteTodo = await fetch(`/todos/${id}`, {
         method: "DELETE"
       });
 
@@ -30,7 +30,7 @@ const ListTodos = () => {
 
     try {
       
-      const response = await fetch("http://localhost:5000/todos")
+      const response = await fetch("/todos")
       const jsonData = await response.json()
 
       setTodos(jsonData);

@@ -2,10 +2,31 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
+const path = require("path");
+const PORT = process.env.PORT || 5000;
+
+//process .env.PORT
+//process .env.NODE_ENV => production or undefined
+
+// app.use(express.static(path.join(__dirname, "client/build")));
+app.use(express.static("./client/build")); 
+
+if(process.env.NODE_ENV === "production"){
+  //serve static content
+  //npm run build
+  app.use(express.static(path.join(__dirname, "client/build")));
+}
+
+console.log(__dirname);
+console.log(path.join(__dirname, "client/build"));
+
+
 
 //middleware
 app.use(cors());
 app.use(express.json());
+
+
 
 //routes
 
@@ -98,37 +119,10 @@ app.delete("/todos/:id", async (req, res) => {
   }
 });
 
-
-//get days todo
-app.get("/tododay", async(req, res) => {
-  try {
-
-    const { day } = req.params;
-
-    const dayTodos = await pool.query(`SELECT t.todo_id, t.description, t.day, t.time, t.date 
-    FROM todo AS t 
-    WHERE t.day = $1`, [day]);
-
-    res.json(dayTodos.rows);
-
-  } catch (err) {
-    console.log(err.message);
-  }
+app.get("*", (req,res) =>{
+  res.sendFile(path.join(__dirname, "client/build/index.html"));
 });
 
-// app.get("/todos", async(req,res)=>{
-//   try {
-    
-//     const allTodos = await pool.query(`SELECT * FROM todo`);
-
-//     res.json(allTodos.rows);
-
-//   } catch (err) {
-//     console.log(err.message);
-//   }
-// })
-
-
-app.listen(5000, ()=>{
-  console.log("server has started at port 5000");
+app.listen(PORT, ()=>{
+  console.log(`server has started at port ${PORT}`);
 });
